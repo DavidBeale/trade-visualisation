@@ -1,0 +1,17 @@
+{
+  "name": "main-view",
+  "main": "MainView.js",
+  "browserify": {
+    "transform": [
+      "html2js-browserify",
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}
