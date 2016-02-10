@@ -14,7 +14,7 @@ var runSequence = require('run-sequence');
 
 
 
-var sources = ['app/**/*.js', 'gulpfile.js'];
+var sources = ['app/**/*.js', '!app/lib/**', 'gulpfile.js'];
 var isDev = false;
 
 
@@ -22,7 +22,7 @@ gulp.task('default', ['test', 'watch']);
 
 
 gulp.task('test', function(){
-	runSequence('clean', 'lint', 'copy-assets', 'build');
+	runSequence('clean', 'lint', 'copy-assets', 'copy-lib-assets', 'build');
 });
 
 
@@ -67,17 +67,22 @@ gulp.task('watch', function() {
 
 	runSequence('test');
 
-	watch(sources, function() {
-		gulp.start('lint');
+	watch(['./app/**', 'gulpfile.js'], function() {
+		gulp.start('test');
 	});	
 });
 
  
 gulp.task('copy-assets', function() {
-	return gulp.src(['./app/*.html', './app/*.json'])
-        .pipe(gulp.dest('dist/'));
+	return gulp.src(['./app/*.html', './app/*.json', './app/lib/**'])
+		.pipe(gulp.dest('dist/'));
 }); 
 
+
+gulp.task('copy-lib-assets', function() {
+	return gulp.src(['./app/lib/**'])
+		.pipe(gulp.dest('dist/lib/'));
+}); 
 
 
 function runBrowserify(config)

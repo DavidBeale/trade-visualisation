@@ -23,6 +23,7 @@ class MainView extends widgetize.base(HTMLElement)
 	attach(dom) 
 	{
 		bindling(dom, this._pm);
+		this._pm.init();
 	}
 	
 }

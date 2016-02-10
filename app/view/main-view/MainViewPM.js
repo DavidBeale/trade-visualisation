@@ -1,6 +1,8 @@
 
 'use strict';
 
+const marketDataService = require('service/MarketDataService');
+
 
 module.exports = class MainViewPM
 {
@@ -216,5 +218,17 @@ module.exports = class MainViewPM
 			  'sellAccount': 'ACCT9',
 			  'volume': 4055
 			}];
+	}
+
+
+	init()
+	{
+		marketDataService.getTrades()
+			.then(trades => {
+				this.trades = trades;
+			})
+			.catch(error => {
+				console.error(error);
+			});
 	}
 };

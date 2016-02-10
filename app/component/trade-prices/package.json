@@ -4,6 +4,7 @@
   "browserify": {
     "transform": [
       [
+        "html2js-browserify",
         "babelify",
         {
           "presets": [

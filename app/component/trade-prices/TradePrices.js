@@ -2,6 +2,7 @@
 
 
 const widgetize = require('widgetize');
+const template = require('./TradePrices.html');
 const pkg = require('./package.json');
 const d3 = require('d3');
 
@@ -69,7 +70,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	set data(value)
 	{
-		if (value !== this._data)
+		if (value !== this._data && Array.isArray(value) )
 		{
 			this._data = value;
 			this.invalidate();
@@ -95,11 +96,18 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update(dom) 
 	{
-		let xScale = d3.scale.linear()
+		let data = this._data.filter(item => item.exchange === 'XVTX');
+
+		data.forEach((item) => {
+			item.time = new Date(item.time);
+		});
+		
+
+		let xScale = d3.time.scale()
 			.range([MARGIN_LEFT, this._width - MARGIN_RIGHT])
 			.domain([
-				d3.min(this._data, xAxisValue), 
-				d3.max(this._data, xAxisValue)
+				d3.min(data, xAxisValue), 
+				d3.max(data, xAxisValue)
 			]);
 		
 		this._xAxis.attr('transform', 'translate(0,' + (this._height - MARGIN_BOTTOM) + ')')
@@ -109,30 +117,26 @@ class TradePrices extends widgetize.base(HTMLElement)
 		let yScale = d3.scale.linear()
 			.range([this._height - MARGIN_TOP, MARGIN_BOTTOM])
 			.domain([
-				d3.min(this._data, yAxisValue), 
-				d3.max(this._data, yAxisValue)
+				0, 
+				d3.max(data, yAxisValue)
 			]);
 
         this._yAxis.call(yAxisFactory(yScale));
 
 
-
 		let dataGroup = d3.nest()
-			.key((item) => item.exchange)
-			.entries(this._data);
+			.key(item => item.exchange)
+			.entries(data);
 
 		let line = lineFactory(xScale, yScale);
 
-		dataGroup.forEach((exchange) => {
+		dataGroup.forEach((exchange, index) => {
 			this._graph.append('svg:path')
 				.attr('d', line(exchange.values))
-				.attr('stroke', (exchange) => { 
-					return 'hsl(' + Math.random() * 360 + ',100%,50%)';
-				})
-				.attr('stroke-width', 2)
-				.attr('id', 'line_' + exchange.key)
-				.attr('fill', 'none');
+				.attr('class', 'line line-' + index)
+				.attr('id', 'line_' + exchange.key);
 		});
+
 
 	}
 
@@ -144,19 +148,20 @@ class TradePrices extends widgetize.base(HTMLElement)
 }
 
 
-module.exports = widgetize(pkg.name, TradePrices);
+module.exports = widgetize(pkg.name, TradePrices, template);
 
 
 /* PRIVAYE */
 
 function xAxisValue(item)
 {
-	return new Date(item.time);
+	return item.time;
 }
 
 
 function yAxisValue(item)
 {
+	console.log(item.price);
 	return item.price;
 }
 
@@ -164,7 +169,9 @@ function yAxisValue(item)
 function xAxisFactory(xScale)
 {
 	return d3.svg.axis()
-		.scale(xScale);
+		.scale(xScale)
+		.tickFormat(d3.time.format("%H:%M"))
+		.orient("bottom");
 }
 
 function yAxisFactory(yScale)
@@ -177,9 +184,8 @@ function yAxisFactory(yScale)
 function lineFactory(xScale, yScale)
 {
 	return d3.svg.line()
-		.x((item) => xScale(xAxisValue(item)))
-		.y((item) => yScale(yAxisValue(item)));
-		//.interpolate('basis');
+		.x(item => xScale(xAxisValue(item)))
+		.y(item => yScale(yAxisValue(item)));
 }
 
 

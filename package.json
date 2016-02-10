@@ -1,7 +1,7 @@
 {
   "name": "trade-visualisation",
   "version": "0.0.0",
-  "description": "Trade Prices Visualisation",
+  "description": "Trade Visualisation",
   "main": "app/index.html",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
