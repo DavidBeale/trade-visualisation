@@ -79,7 +79,7 @@ function filterTrades()
 	this.filteredTrades = this._trades.filter(item => {
 		let [stockSym, exchangeSufix] = item.sym.split('.');
 
-		return this.selectedStocks.filter(item => item.sym === stockSym).length !== 0
-				&& this.selectedExchanges.filter(item => item.suffix === exchangeSufix).length !== 0
+		return this.selectedStocks.filter(item => item.sym === stockSym).length !== 0 && 
+			this.selectedExchanges.filter(item => item.suffix === exchangeSufix).length !== 0;
 	});
 }

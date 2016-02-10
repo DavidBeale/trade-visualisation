@@ -132,10 +132,12 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		let line = lineFactory(xScale, yScale);
 
+		let lines = this._graph.selectAll('path').data(dataGroup);
+
 		dataGroup.forEach((exchange, index) => {
 			this._graph.append('svg:path')
 				.attr('d', line(exchange.values))
-				.attr('class', 'line line-' + index)
+				.attr('class', 'line line-' + exchange.key)
 				.attr('id', 'line_' + exchange.key);
 		});
 

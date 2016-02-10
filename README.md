@@ -2,7 +2,7 @@
 
 Trade Visualisation
 
-
+[View Demo](http://davidbeale.github.io/trade-visualisation/)
 
 ## Installation
 
