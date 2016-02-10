@@ -8,10 +8,12 @@ const pkg = require('./package.json');
 const MainViewPM = require('./MainViewPM.js');
 const bindling = require('bindling');
 
+require('component/trade-prices');
+
 /**
- * Example View
+ * Main View
  */
-class ExampleView extends widgetize.base(HTMLElement)
+class MainView extends widgetize.base(HTMLElement)
 {
 	init() 
 	{
@@ -26,4 +28,4 @@ class ExampleView extends widgetize.base(HTMLElement)
 }
 
 
-module.exports = widgetize(pkg.name, MainViewPM, template);
+module.exports = widgetize(pkg.name, MainView, template);

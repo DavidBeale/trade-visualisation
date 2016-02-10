@@ -22,11 +22,11 @@ gulp.task('default', ['test', 'watch']);
 
 
 gulp.task('test', function(){
-	runSequence('clean', 'build');
+	runSequence('clean', 'lint', 'copy-assets', 'build');
 });
 
 
-gulp.task('build', ['lint', 'copy-assets'], function() {
+gulp.task('build', function() {
 	return runBrowserify({
 		isDev : isDev,
 		src: './app/main.js',

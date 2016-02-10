@@ -1,0 +1,16 @@
+{
+  "name": "trade-prices",
+  "main": "TradePrices.js",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}
