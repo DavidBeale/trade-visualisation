@@ -21,6 +21,7 @@
     "babelify": "^7.2.0",
     "bindling": "^1.0.4",
     "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12",
     "del": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-cli": "^1.2.0",

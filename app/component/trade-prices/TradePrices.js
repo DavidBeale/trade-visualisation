@@ -3,6 +3,7 @@
 
 const widgetize = require('widgetize');
 const pkg = require('./package.json');
+const d3 = require('d3');
 
 
 const MARGIN_TOP = 50;
@@ -94,11 +95,44 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update(dom) 
 	{
-
+		let xScale = d3.scale.linear()
+			.range([MARGIN_LEFT, this._width - MARGIN_RIGHT])
+			.domain([
+				d3.min(this._data, xAxisValue), 
+				d3.max(this._data, xAxisValue)
+			]);
+		
 		this._xAxis.attr('transform', 'translate(0,' + (this._height - MARGIN_BOTTOM) + ')')
-             .call(xAxisFactory.call(this));
+             .call(xAxisFactory(xScale));
 
-        this._yAxis.call(yAxisFactory.call(this));
+
+		let yScale = d3.scale.linear()
+			.range([this._height - MARGIN_TOP, MARGIN_BOTTOM])
+			.domain([
+				d3.min(this._data, yAxisValue), 
+				d3.max(this._data, yAxisValue)
+			]);
+
+        this._yAxis.call(yAxisFactory(yScale));
+
+
+
+		let dataGroup = d3.nest()
+			.key((item) => item.exchange)
+			.entries(this._data);
+
+		let line = lineFactory(xScale, yScale);
+
+		dataGroup.forEach((exchange) => {
+			this._graph.append('svg:path')
+				.attr('d', line(exchange.values))
+				.attr('stroke', (exchange) => { 
+					return 'hsl(' + Math.random() * 360 + ',100%,50%)';
+				})
+				.attr('stroke-width', 2)
+				.attr('id', 'line_' + exchange.key)
+				.attr('fill', 'none');
+		});
 
 	}
 
@@ -127,30 +161,25 @@ function yAxisValue(item)
 }
 
 
-function xAxisFactory()
+function xAxisFactory(xScale)
 {
-	let xScale = d3.scale.linear()
-		.range([MARGIN_LEFT, this._width - MARGIN_RIGHT])
-		.domain([
-			d3.min(this._data, xAxisValue), 
-			d3.max(this._data, xAxisValue)
-		]);
-
 	return d3.svg.axis()
 		.scale(xScale);
 }
 
-function yAxisFactory()
+function yAxisFactory(yScale)
 {
-	let yScale = d3.scale.linear()
-		.range([this._height - MARGIN_TOP, MARGIN_BOTTOM])
-		.domain([
-			d3.min(this._data, yAxisValue), 
-			d3.max(this._data, yAxisValue)
-		]);
-
 	return d3.svg.axis()
 		.scale(yScale)
-		.orient("left");
+		.orient('left');
 }
+
+function lineFactory(xScale, yScale)
+{
+	return d3.svg.line()
+		.x((item) => xScale(xAxisValue(item)))
+		.y((item) => yScale(yAxisValue(item)));
+		//.interpolate('basis');
+}
+
 

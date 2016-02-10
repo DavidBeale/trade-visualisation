@@ -84,7 +84,8 @@ function runBrowserify(config)
 {
 	var setup = {
 		entries: config.src,
-		paths: ['./node_modules', './app/']
+		paths: ['./node_modules', './app/'],
+		excludes: ['d3']
 	};
 
 	if (config.isDev)
