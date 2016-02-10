@@ -5,7 +5,8 @@
   "main": "app/index.html",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
-    "watch": "node_modules/.bin/gulp watch"
+    "watch": "node_modules/.bin/gulp watch",
+    "deploy": "node_modules/.bin/gulp deploy"
   },
   "author": {
     "name": "David Beale",
