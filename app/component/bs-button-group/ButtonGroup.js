@@ -85,7 +85,8 @@ class ButtonGroup extends widgetize.base(HTMLElement)
 
 		buttons.text(item => item.name)
 			.classed('active', item => this._selected.indexOf(item) !== -1)
-			.classed('btn-primary', item => this._selected.indexOf(item) !== -1);
+			.classed('btn-primary', item => this._selected.indexOf(item) !== -1 && !this._singleToggle)
+			.classed('btn-success', item => this._selected.indexOf(item) !== -1 && this._singleToggle);
 
 		buttons.exit().remove();
 	}

@@ -11,6 +11,7 @@ var watchify = require('watchify');
 var _ = require('lodash');
 var source = require('vinyl-source-stream');
 var runSequence = require('run-sequence');
+var ghPages = require('gulp-gh-pages');
 
 
 
@@ -83,6 +84,12 @@ gulp.task('copy-lib-assets', function() {
 	return gulp.src(['./app/lib/**'])
 		.pipe(gulp.dest('dist/lib/'));
 }); 
+
+
+gulp.task('deploy', function() {
+  return gulp.src('./dist/**/*')
+    .pipe(ghPages());
+});
 
 
 function runBrowserify(config)
