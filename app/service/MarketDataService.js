@@ -14,6 +14,24 @@ class MarketDataService
 				return result.data;
 			});
 	}
+
+
+	getExchanges()
+	{
+		return getMarketData.call(this)
+			.then(result => {
+				return result.exchanges;
+			});
+	}
+
+
+	getStocks()
+	{
+		return getMarketData.call(this)
+			.then(result => {
+				return result.stocks;
+			});
+	}
 }
 
 

@@ -1,7 +1,19 @@
 <section>
-	<div class="jumbotron">
 
-		<trade-prices width="1000" height="500" data="${trades}"><trade-prices>/
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-left">
+				<p class="navbar-text">Exchanges</p>
+				<bs-button-group data="${exchanges}" selected="${selectedExchanges}" on-change="filterExchanges(this.selected)"></bs-button-group>
+			</div>
 
-	</div>
+			<div class="navbar-right">
+				<p class="navbar-text">Stocks</p>
+				<bs-button-group data="${stocks}" selected="${selectedStocks}" single-toggle="true" on-change="filterStocks(this.selected)"></bs-button-group>
+			</div>
+		</div>
+	</nav>
+
+	<trade-prices width="1170" height="600" data="${filteredTrades}"><trade-prices>/
+
 </section>

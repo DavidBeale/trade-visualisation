@@ -9,7 +9,7 @@ const d3 = require('d3');
 
 const MARGIN_TOP = 50;
 const MARGIN_BOTTOM = 50;
-const MARGIN_LEFT = 40;
+const MARGIN_LEFT = 60;
 const MARGIN_RIGHT = 20;
 
 /**
@@ -96,7 +96,9 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update(dom) 
 	{
-		let data = this._data.filter(item => item.exchange === 'XVTX');
+		this._graph.selectAll('path').remove();
+
+		let data = this._data.concat();
 
 		data.forEach((item) => {
 			item.time = new Date(item.time);
@@ -117,7 +119,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		let yScale = d3.scale.linear()
 			.range([this._height - MARGIN_TOP, MARGIN_BOTTOM])
 			.domain([
-				0, 
+				d3.min(data, yAxisValue), 
 				d3.max(data, yAxisValue)
 			]);
 
@@ -161,7 +163,6 @@ function xAxisValue(item)
 
 function yAxisValue(item)
 {
-	console.log(item.price);
 	return item.price;
 }
 
@@ -170,8 +171,8 @@ function xAxisFactory(xScale)
 {
 	return d3.svg.axis()
 		.scale(xScale)
-		.tickFormat(d3.time.format("%H:%M"))
-		.orient("bottom");
+		.tickFormat(d3.time.format('%H:%M'))
+		.orient('bottom');
 }
 
 function yAxisFactory(yScale)

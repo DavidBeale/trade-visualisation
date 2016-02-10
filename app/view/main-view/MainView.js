@@ -9,6 +9,7 @@ const MainViewPM = require('./MainViewPM.js');
 const bindling = require('bindling');
 
 require('component/trade-prices');
+require('component/bs-button-group');
 
 /**
  * Main View
