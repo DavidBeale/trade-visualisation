@@ -36,6 +36,16 @@ gulp.task('build', ['lint', 'copy-assets'], function() {
 });
 
 
+gulp.task('build-tests', function() {
+	return runBrowserify({
+		isDev : isDev,
+		src: './test/test.js',
+		bundle: 'test.js',
+		dest: 'dist/test'
+	});
+});
+
+
 
 gulp.task('clean', function(callback){
 	return del(['dist'], callback);
