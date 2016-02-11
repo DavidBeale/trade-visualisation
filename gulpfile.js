@@ -15,7 +15,7 @@ var ghPages = require('gulp-gh-pages');
 
 
 
-var sources = ['app/**/*.js', '!app/lib/**', 'gulpfile.js'];
+var sources = ['app/**/*.js', '!app/lib/**', 'test/**/*.js', 'gulpfile.js'];
 var isDev = false;
 
 
@@ -23,11 +23,15 @@ gulp.task('default', ['test', 'watch']);
 
 
 gulp.task('test', function(){
-	runSequence('clean', 'lint', 'copy-assets', 'copy-lib-assets', 'build');
+	runSequence('clean', 'run-tests');
 });
 
 
-gulp.task('build', function() {
+gulp.task('build', ['lint', 'copy-assets', 'copy-lib-assets', 'build-app']);
+
+
+
+gulp.task('build-app', function() {
 	return runBrowserify({
 		isDev : isDev,
 		src: './app/main.js',
@@ -42,10 +46,16 @@ gulp.task('build-tests', function() {
 		isDev : isDev,
 		src: './test/test.js',
 		bundle: 'test.js',
-		dest: 'dist/test'
+		dest: 'dist/test',
+		isTest: true
 	});
 });
 
+
+gulp.task('run-tests', ['build', 'build-tests'], function() {
+    return gulp.src('dist/test/test.js')
+    	.pipe(plugins.mocha({reporter: 'spec'}));
+});
 
 
 gulp.task('clean', function(callback){
@@ -68,7 +78,7 @@ gulp.task('watch', function() {
 
 	runSequence('test');
 
-	watch(['./app/**', 'gulpfile.js'], function() {
+	watch(['./app/**', './test/**', 'gulpfile.js'], function() {
 		gulp.start('test');
 	});	
 });
@@ -112,6 +122,13 @@ function runBrowserify(config)
 		b = watchify(b);
       	b.on('update', bundle);
       	b.on('log', gutil.log);
+	}
+
+	if (config.isTest)
+	{
+		b.transform('babelify', {
+			presets: 'es2015'
+		});
 	}
 
 	function bundle()
