@@ -7,7 +7,7 @@ const d3 = require('d3');
 
 const MARGIN_TOP = 50;
 const MARGIN_BOTTOM = 50;
-const MARGIN_LEFT = 60;
+const MARGIN_LEFT = 80;
 const MARGIN_RIGHT = 20;
 
 /**
@@ -89,12 +89,13 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._yAxis = this._graph.append('svg:g')
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + MARGIN_LEFT + ',0)');
+
 	}
 
 
 	update() 
 	{
-		this._graph.selectAll('path, text.legend').remove();
+		this._graph.selectAll('path, text.legend, text.axis-label').remove();
 
 		let data = this._data.concat();
 
@@ -114,6 +115,13 @@ class TradePrices extends widgetize.base(HTMLElement)
              .call(xAxisFactory(xScale));
 
 
+        this._xAxis.append('text')
+			.attr('x', (this._width - MARGIN_RIGHT)/2)
+			.attr('y', 40)
+			.attr('class', 'axis-label')
+			.text('Trade Time');   
+
+
 		let yScale = d3.scale.linear()
 			.range([this._height - MARGIN_TOP, MARGIN_BOTTOM])
 			.domain([
@@ -122,6 +130,14 @@ class TradePrices extends widgetize.base(HTMLElement)
 			]);
 
         this._yAxis.call(yAxisFactory(yScale));
+
+		this._graph.append('text')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 0)
+			.attr('x', 0 - (this._height / 2))
+			.attr('dy', '1em')
+			.attr('class', 'axis-label')
+			.text('Trade Price');
 
 
 		let dataGroup = d3.nest()

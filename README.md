@@ -13,7 +13,6 @@ The view and components are extensions to HTMLElement, registered as Custom Elem
 
 
 ### Improvements
-- Label Axies
 - Add volume data as bar chart
 - Add price point tooltip 
 - Use [parcelify](https://www.npmjs.com/package/parcelify) to bundle and pre-process CSS
@@ -42,4 +41,4 @@ npm test
 npm run watch
 ```
 
-Open *http://localhost:3000* in your browser
+Open [http://localhost:3000] in your browser
