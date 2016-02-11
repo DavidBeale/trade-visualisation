@@ -1,7 +1,7 @@
 
 'use strict';
 
-const marketDataService = require('service/MarketDataService');
+const marketDataService = require('service/market-data-service');
 
 
 module.exports = class MainViewPM

@@ -1,0 +1,20 @@
+{
+  "name": "market-data-service",
+  "main": "marketDataService.js",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ],
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "d3": "global:d3"
+  }
+}

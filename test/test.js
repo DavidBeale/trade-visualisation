@@ -2,16 +2,22 @@
 
 /*jshint -W079 */
 const expect = require('chai').expect;
+const sinon = require('sinon'); 
 
 
 const MainViewPM = require('../app/view/main-view/MainViewPM');
-//const 
+const marketDataService = require('../app/service/market-data-service');
+
 
 let pm = null;
 
 describe('MainViewPM', () => {
 
 	before(() => {
+
+		sinon.stub(marketDataService, '_getMarketData').returns(
+			Promise.resolve( require('../app/data.json') )
+		);
 
 		pm = new MainViewPM();
 

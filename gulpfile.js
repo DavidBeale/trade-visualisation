@@ -12,6 +12,7 @@ var _ = require('lodash');
 var source = require('vinyl-source-stream');
 var runSequence = require('run-sequence');
 var ghPages = require('gulp-gh-pages');
+var gls = require('gulp-live-server');
 
 
 
@@ -78,6 +79,8 @@ gulp.task('watch', function() {
 
 	runSequence('test');
 
+	gls.static('dist').start();
+
 	watch(['./app/**', './test/**', 'gulpfile.js'], function() {
 		gulp.start('test');
 	});	
@@ -97,8 +100,12 @@ gulp.task('copy-lib-assets', function() {
 
 
 gulp.task('deploy', function() {
-  return gulp.src('./dist/**/*')
-    .pipe(ghPages());
+  
+	return del(['dist/test'], function() {
+		gulp.src('./dist/**/*')
+		.pipe(ghPages());
+	});
+
 });
 
 
