@@ -48,7 +48,7 @@ var ButtonGroup = function (_widgetize$base) {
 
 			var buttons = this._group.selectAll('button').data(this._data);
 
-			buttons.enter().append('button').attr('class', 'btn btn-default navbar-btn').attr('type', 'button').on('click', onClick.bind(this));
+			buttons.enter().append('button').attr('class', 'btn navbar-btn').attr('type', 'button').on('click', onClick.bind(this));
 
 			buttons.text(function (item) {
 				return item.name;
