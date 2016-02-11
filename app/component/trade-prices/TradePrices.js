@@ -17,9 +17,9 @@ class TradePrices extends widgetize.base(HTMLElement)
 {
 	init() 
 	{
-		this._width = 100;
+		this._width = 0;
 
-		this._height = 100;
+		this._height = 0;
 
 		this._data = [];
 
@@ -84,15 +84,15 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.attr('height', this.height);
 
 		this._xAxis = this._graph.append('svg:g')
-        	.attr('class', 'x axis');
+			.attr('class', 'x axis');
 
-        this._yAxis = this._graph.append('svg:g')
+		this._yAxis = this._graph.append('svg:g')
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + MARGIN_LEFT + ',0)');
 	}
 
 
-	update(dom) 
+	update() 
 	{
 		this._graph.selectAll('path').remove();
 
@@ -139,14 +139,8 @@ class TradePrices extends widgetize.base(HTMLElement)
 				.attr('id', 'line_' + exchange.key);
 		});
 
-
 	}
 
-
-	detach(dom)
-	{
-
-	}	
 }
 
 
