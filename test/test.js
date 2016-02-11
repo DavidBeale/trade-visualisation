@@ -5,11 +5,11 @@ const expect = require('chai').expect;
 
 
 const MainViewPM = require('../app/view/main-view/MainViewPM');
+//const 
 
+let pm = null;
 
 describe('MainViewPM', () => {
-
-	let pm = null;
 
 	before(() => {
 
@@ -30,23 +30,64 @@ describe('MainViewPM', () => {
 
 
 
-	describe('init', () => {
+	describe('init()', () => {
 
-		//pm.init();
+		it('should load data', (done) => {
+
+			pm.init();
+
+			setTimeout(() => {
+				
+				expect(pm.filteredTrades.length).to.equal(326);
+
+				expect(pm.exchanges.length).to.equal(3);
+
+				expect(pm.stocks.length).to.equal(3);
+
+				done();
+
+			}, 10);
+
+		});
 	
 	});
 	
 
-	describe('filterExchanges', () => {
 
+	describe('filterExchanges()', () => {
 
+		it('should filter by the exchanges', () => {
+
+			pm.filterExchanges([
+				{
+					'mic': 'XVTX',
+					'suffix': 'VX',
+					'name': 'Virt-X'
+				}
+			]);
+
+			expect(pm.filteredTrades.length).to.equal(103);
+
+		});
 
 	});
 
 
-	describe('filterStocks', () => {
 
+	describe('filterStocks()', () => {
 
+		it('should filter by the stock', () => {
+
+			pm.filterStocks([
+				{
+					'sym': 'GOG',
+					'name': 'Goggle Corp'
+				}
+			]);
+
+			expect(pm.filteredTrades.length).to.equal(120);
+
+		});
 	
 	});
 });

@@ -52,6 +52,7 @@ module.exports = class MainViewPM
 
 		
 		Promise.all([getTradesPromise, getExchangesPromise, getStocks]).then(() => {
+			console.info('Data loaded');
 			filterTrades.call(this);
 		});			
 	}
