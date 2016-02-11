@@ -13,6 +13,9 @@ The view and components are extensions to HTMLElement, registered as Custom Elem
 
 
 ### Improvements
+- Label Axies
+- Add volumn data as bar chart
+- Add price point tooltip 
 - Use [parcelify](https://www.npmjs.com/package/parcelify) to bundle and pre-process CSS
 - Components, views and services could be moved to their own packages, as per npm micro-modules
 - UI Tests using WebDriver

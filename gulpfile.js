@@ -101,10 +101,10 @@ gulp.task('copy-lib-assets', function() {
 
 gulp.task('deploy', function() {
   
-	return del(['dist/test'], function() {
-		gulp.src('./dist/**/*')
+	del(['dist/test']);
+
+	return gulp.src('./dist/**/*')
 		.pipe(ghPages());
-	});
 
 });
 
