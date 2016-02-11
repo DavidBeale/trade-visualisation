@@ -98,22 +98,6 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + MARGIN_LEFT + ',0)');
 
-		this._toolTip = this._graph.append('svg:g')
-			.attr('class', 'toolTip')
-			.attr('width', 50)
-			.attr('height', 50)
-			.style('display', 'none');
-			
-		this._toolTip.append('svg:circle')
-				.style('fill', 'none')
-				.style('stroke', 'blue')
-				.attr('x', 50)
-				.attr('y', 50)
-				.attr('r', 4);
-
-		this._toolTopLabel = this._toolTip.append('svg:text')
-			.attr('y', -10);
-
 		this._voronoiGroup = this._graph.append('svg:g')
 			.attr('class', 'voronoi');
 	}
@@ -121,7 +105,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update() 
 	{
-		this._graph.selectAll('path, text.legend, text.axis-label').remove();
+		this._graph.selectAll('path, text.legend, text.axis-label, g.toolTip').remove();
 
 		let data = this._data.concat();
 
@@ -208,6 +192,24 @@ class TradePrices extends widgetize.base(HTMLElement)
 					this._toolTip.style('display', null);
 				})
 				.on('mouseout', onMouseOut.bind(this));
+
+
+		this._toolTip = this._graph.append('svg:g')
+			.attr('class', 'toolTip')
+			.attr('width', 50)
+			.attr('height', 50)
+			.style('display', 'none');
+
+
+		this._toolTip.append('svg:circle')
+				.style('fill', 'none')
+				.style('stroke', 'blue')
+				.attr('x', 50)
+				.attr('y', 50)
+				.attr('r', 4);
+
+		this._toolTopLabel = this._toolTip.append('svg:text')
+			.attr('y', -10);		
 	}
 
 }
