@@ -1,6 +1,6 @@
 # trade-visualisation [![Build Status](https://travis-ci.org/DavidBeale/trade-visualisation.svg?branch=master)](https://travis-ci.org/DavidBeale/trade-visualisation)
 
-Trade Visualisation
+Trade visualisation to show trade price over time
 
 [View Demo](http://davidbeale.github.io/trade-visualisation/)
 
