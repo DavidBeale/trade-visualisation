@@ -77,7 +77,7 @@ class ButtonGroup extends widgetize.base(HTMLElement)
 		let buttons = this._group.selectAll('button').data(this._data);
 
 		buttons.enter().append('button')
-			.attr('class', 'btn btn-default navbar-btn')
+			.attr('class', 'btn navbar-btn')
 			.attr('type', 'button')
 			.on('click', onClick.bind(this));
 
