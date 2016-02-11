@@ -28,6 +28,12 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xAxis = null;
 
 		this._yAxis = null;
+
+		this._toolTip = null;
+
+		this._xScale = null;
+
+		this._yScale = null;
 	}
 
 
@@ -90,6 +96,18 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + MARGIN_LEFT + ',0)');
 
+		this._toolTip = this._graph.append('svg:g')
+			.attr('class', 'toolTip')
+			.style('display', 'none');
+			
+		this._toolTip .append('circle')
+				.attr('class', 'y')
+				.style('fill', 'none')
+				.style('stroke', 'blue')
+				.attr('r', 4);
+
+		this._voronoiGroup = this._graph.append('svg:g')
+			.attr('class', 'voronoi');
 	}
 
 
@@ -104,7 +122,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		});
 		
 
-		let xScale = d3.time.scale()
+		this._xScale = d3.time.scale()
 			.range([MARGIN_LEFT, this._width - MARGIN_RIGHT])
 			.domain([
 				d3.min(data, xAxisValue), 
@@ -112,7 +130,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 			]);
 		
 		this._xAxis.attr('transform', 'translate(0,' + (this._height - MARGIN_BOTTOM) + ')')
-             .call(xAxisFactory(xScale));
+             .call(xAxisFactory(this._xScale));
 
 
         this._xAxis.append('text')
@@ -122,14 +140,14 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.text('Trade Time');   
 
 
-		let yScale = d3.scale.linear()
+		this._yScale = d3.scale.linear()
 			.range([this._height - MARGIN_TOP, MARGIN_BOTTOM])
 			.domain([
 				d3.min(data, yAxisValue), 
 				d3.max(data, yAxisValue)
 			]);
 
-        this._yAxis.call(yAxisFactory(yScale));
+        this._yAxis.call(yAxisFactory(this._yScale));
 
 		this._graph.append('text')
 			.attr('transform', 'rotate(-90)')
@@ -140,11 +158,16 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.text('Trade Price');
 
 
+		let voronoi = d3.geom.voronoi()
+			.x((d) => { return this._xScale(d.time); })
+			.y((d) => { return this._yScale(d.price); })
+			.clipExtent([[0 - MARGIN_LEFT, 0 - MARGIN_TOP], [this._width + MARGIN_RIGHT, this._height + MARGIN_BOTTOM]]);
+
 		let dataGroup = d3.nest()
 			.key(item => item.exchange)
 			.entries(data);
 
-		let line = lineFactory(xScale, yScale);
+		let line = lineFactory(this._xScale, this._yScale);
 
 		let lines = this._graph.selectAll('path').data(dataGroup);
 
@@ -164,6 +187,19 @@ class TradePrices extends widgetize.base(HTMLElement)
 				.text(exchange.key);	
 		});
 
+
+		this._voronoiGroup.selectAll('path').data(voronoi(this._data))
+			.enter().append('svg:path')
+				.attr('d', function(d) { 
+					return 'M' + d.join('L') + 'Z'; 
+				})
+				.datum(function(d) { 
+					return d.point; 
+				})
+				.on('mouseover', () => {
+					this._toolTip.style('display', null);
+				})
+				.on('mouseout', onMouseOut.bind(this));
 	}
 
 }
@@ -208,4 +244,14 @@ function lineFactory(xScale, yScale)
 		.y(item => yScale(yAxisValue(item)));
 }
 
+
+function onMouseOut(item)	
+{
+	console.log(item);
+
+	this._toolTip.style('display', 'none');
+
+	this._toolTip
+		.attr('transform', 'translate(' + this._xScale(xAxisValue(item)) + ',' + this._yScale(yAxisValue(item)) + ')');
+}
 
