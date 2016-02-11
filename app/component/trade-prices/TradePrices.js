@@ -94,7 +94,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update() 
 	{
-		this._graph.selectAll('path').remove();
+		this._graph.selectAll('path, text.legend').remove();
 
 		let data = this._data.concat();
 
@@ -132,11 +132,20 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		let lines = this._graph.selectAll('path').data(dataGroup);
 
+		let colSpace = this._width / dataGroup.length;
+
 		dataGroup.forEach((exchange, index) => {
 			this._graph.append('svg:path')
 				.attr('d', line(exchange.values))
 				.attr('class', 'line line-' + exchange.key)
 				.attr('id', 'line_' + exchange.key);
+
+
+			this._graph.append('text')
+				.attr('x', (colSpace/2) + index*colSpace)
+				.attr('y', 30)
+				.attr('class','legend legend-' + exchange.key)
+				.text(exchange.key);	
 		});
 
 	}
