@@ -20,6 +20,7 @@ The view and components are extensions to HTMLElement, registered as Custom Elem
 - Components, views and services could be moved to their own packages, as per npm micro-modules
 - UI Tests using WebDriver
 - Use a logger
+- Minimize outputs
 
 
 ## Installation

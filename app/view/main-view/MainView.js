@@ -1,7 +1,4 @@
 
-
-'use strict';
-
 const widgetize = require('widgetize');
 const template = require('./MainView.html');
 const pkg = require('./package.json');

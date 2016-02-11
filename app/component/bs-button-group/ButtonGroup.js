@@ -1,5 +1,3 @@
-'use strict';
-
 
 const widgetize = require('widgetize');
 const pkg = require('./package.json');

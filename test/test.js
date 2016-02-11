@@ -1,4 +1,3 @@
-'use strict';
 
 /*jshint -W079 */
 const expect = require('chai').expect;

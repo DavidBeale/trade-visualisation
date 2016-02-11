@@ -1,6 +1,4 @@
 
-'use strict';
-
 const marketDataService = require('service/market-data-service');
 
 

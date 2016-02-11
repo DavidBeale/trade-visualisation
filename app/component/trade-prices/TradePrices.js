@@ -1,5 +1,3 @@
-'use strict';
-
 
 const widgetize = require('widgetize');
 const template = require('./TradePrices.html');
