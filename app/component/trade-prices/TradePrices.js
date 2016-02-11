@@ -34,6 +34,8 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xScale = null;
 
 		this._yScale = null;
+
+		this._toolTopLabel = null;
 	}
 
 
@@ -98,13 +100,19 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		this._toolTip = this._graph.append('svg:g')
 			.attr('class', 'toolTip')
+			.attr('width', 50)
+			.attr('height', 50)
 			.style('display', 'none');
 			
-		this._toolTip .append('circle')
-				.attr('class', 'y')
+		this._toolTip.append('svg:circle')
 				.style('fill', 'none')
 				.style('stroke', 'blue')
+				.attr('x', 50)
+				.attr('y', 50)
 				.attr('r', 4);
+
+		this._toolTopLabel = this._toolTip.append('svg:text')
+			.attr('y', -10);
 
 		this._voronoiGroup = this._graph.append('svg:g')
 			.attr('class', 'voronoi');
@@ -247,11 +255,12 @@ function lineFactory(xScale, yScale)
 
 function onMouseOut(item)	
 {
-	console.log(item);
-
 	this._toolTip.style('display', 'none');
 
 	this._toolTip
 		.attr('transform', 'translate(' + this._xScale(xAxisValue(item)) + ',' + this._yScale(yAxisValue(item)) + ')');
+
+	this._toolTopLabel
+		.text(item.price);
 }
 
