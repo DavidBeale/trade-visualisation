@@ -160,9 +160,9 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		let dataGroup = d3.nest()
 			.key(item => item.exchange)
-			.entries(data);
-
-
+			.entries(data)
+			.sort(sortGroup);
+			
 
 		let line = lineFactory(this._xScale, this._yScale);
 
@@ -293,3 +293,20 @@ function onMouseOut(cord)
 		.text(trade.price);
 }
 
+
+
+function sortGroup(item1, item2)
+{
+	if (item1.key > item2.key)
+	{
+		return 1;
+	}
+	else if (item1.key < item2.key)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+}
