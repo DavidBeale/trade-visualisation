@@ -20,11 +20,11 @@ class MainView extends widgetize.base(HTMLElement)
 
 	attach(dom) 
 	{
-		bindling(dom, this._pm);
+		dom.appendChild( bindling(template, this._pm) );
 		this._pm.init();
 	}
 	
 }
 
 
-module.exports = widgetize(pkg.name, MainView, template);
+module.exports = widgetize(pkg.name, MainView);
