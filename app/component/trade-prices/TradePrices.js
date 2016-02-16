@@ -176,7 +176,8 @@ class TradePrices extends widgetize.base(HTMLElement)
 					return 'line_' + exchange.key;
 				});
 
-		lines.attr('d', exchange => line(exchange.values));		
+		lines.transition()
+			.attr('d', exchange => line(exchange.values));		
 
 		lines.exit().remove();
 
@@ -193,9 +194,10 @@ class TradePrices extends widgetize.base(HTMLElement)
 				})
 				.text(exchange => exchange.key);		
 
-		legends.attr('x', (exchange, index) => {
-			return (colSpace/2) + index*colSpace;
-		});
+		legends.transition()
+			.attr('x', (exchange, index) => {
+				return (colSpace/2) + index*colSpace;
+			});
 
 		legends.exit().remove();
 
