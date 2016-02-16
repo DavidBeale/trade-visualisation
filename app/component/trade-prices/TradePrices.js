@@ -105,7 +105,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update() 
 	{
-		this._graph.selectAll('path, text.legend, text.axis-label, g.toolTip').remove();
+		this._graph.selectAll('text.axis-label, g.toolTip').remove();
 
 		let data = this._data.concat();
 
@@ -161,27 +161,43 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		let line = lineFactory(this._xScale, this._yScale);
 
-		let lines = this._graph.selectAll('path').data(dataGroup);
+		let lines = this._graph.selectAll('path.line').data(dataGroup, exchange => exchange.key);
+
+		lines.enter().append('svg:path')
+				.attr('class', exchange => {
+					return 'line line-' + exchange.key;
+				})
+				.attr('id', exchange => {
+					return 'line_' + exchange.key;
+				});
+
+		lines.attr('d', exchange => line(exchange.values));		
+
+		lines.exit().remove();
+
 
 		let colSpace = this._width / dataGroup.length;
 
-		dataGroup.forEach((exchange, index) => {
-			this._graph.append('svg:path')
-				.attr('d', line(exchange.values))
-				.attr('class', 'line line-' + exchange.key)
-				.attr('id', 'line_' + exchange.key);
+		let legends = this._graph.selectAll('text.legend').data(dataGroup, exchange => exchange.key);
 
-
-			this._graph.append('text')
-				.attr('x', (colSpace/2) + index*colSpace)
+		legends.enter().append('text')
 				.attr('y', 30)
-				.attr('class','legend legend-' + exchange.key)
-				.text(exchange.key);	
+				.attr('class', exchange => {
+					return 'legend legend-' + exchange.key;
+				})
+				.text(exchange => exchange.key);		
+
+		legends.attr('x', (exchange, index) => {
+			return (colSpace/2) + index*colSpace;
 		});
 
+		legends.exit().remove();
 
-		this._voronoiGroup.selectAll('path').data(voronoi(this._data))
-			.enter().append('svg:path')
+
+
+		let voronoiPaths = this._voronoiGroup.selectAll('path').data(voronoi(this._data));
+
+		voronoiPaths.enter().append('svg:path')
 				.attr('d', function(d) { 
 					return 'M' + d.join('L') + 'Z'; 
 				})
@@ -192,6 +208,9 @@ class TradePrices extends widgetize.base(HTMLElement)
 					this._toolTip.style('display', null);
 				})
 				.on('mouseout', onMouseOut.bind(this));
+
+		voronoiPaths.exit().remove();
+			
 
 
 		this._toolTip = this._graph.append('svg:g')

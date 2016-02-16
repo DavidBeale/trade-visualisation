@@ -82,7 +82,7 @@ gulp.task('watch', function() {
 	gls.static('dist').start();
 
 	watch(['./app/**', './test/**', 'gulpfile.js'], function() {
-		gulp.start('test');
+		runSequence(['lint', 'copy-assets', 'copy-lib-assets']);
 	});	
 });
 
