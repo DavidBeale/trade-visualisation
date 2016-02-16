@@ -156,7 +156,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		let voronoi = d3.geom.voronoi()
 			.x((d) => { return this._xScale(d.time); })
 			.y((d) => { return this._yScale(d.price); })
-			.clipExtent([[0 - MARGIN_LEFT, 0 - MARGIN_TOP], [this._width + MARGIN_RIGHT, this._height + MARGIN_BOTTOM]]);
+			.clipExtent([[MARGIN_LEFT, MARGIN_TOP], [this._width - MARGIN_RIGHT, this._height - MARGIN_BOTTOM]]);
 
 		let dataGroup = d3.nest()
 			.key(item => item.exchange)
