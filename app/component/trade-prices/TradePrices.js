@@ -29,6 +29,10 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		this._yAxis = null;
 
+		this._xAxisLabel = null;
+
+		this._yAxisLabel = null;
+
 		this._toolTip = null;
 
 		this._xScale = null;
@@ -94,9 +98,21 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xAxis = this._graph.append('svg:g')
 			.attr('class', 'x axis');
 
+		this._xAxisLabel = this._xAxis.append('text')
+			.attr('y', 40)
+			.attr('class', 'axis-label')
+			.text('Trade Time');   	
+
 		this._yAxis = this._graph.append('svg:g')
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + MARGIN_LEFT + ',0)');
+
+		this._yAxisLabel = this._graph.append('text')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 0)
+			.attr('dy', '1em')
+			.attr('class', 'axis-label')
+			.text('Trade Price');	
 
 		this._voronoiGroup = this._graph.append('svg:g')
 			.attr('class', 'voronoi');
@@ -105,8 +121,6 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 	update() 
 	{
-		this._graph.selectAll('text.axis-label, g.toolTip').remove();
-
 		let data = this._data.concat();
 
 		data.forEach((item) => {
@@ -124,12 +138,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xAxis.attr('transform', 'translate(0,' + (this._height - MARGIN_BOTTOM) + ')')
              .call(xAxisFactory(this._xScale));
 
-
-        this._xAxis.append('text')
-			.attr('x', (this._width - MARGIN_RIGHT)/2)
-			.attr('y', 40)
-			.attr('class', 'axis-label')
-			.text('Trade Time');   
+		this._xAxisLabel.attr('x', (this._width - MARGIN_RIGHT)/2)
 
 
 		this._yScale = d3.scale.linear()
@@ -141,13 +150,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 
         this._yAxis.call(yAxisFactory(this._yScale));
 
-		this._graph.append('text')
-			.attr('transform', 'rotate(-90)')
-			.attr('y', 0)
-			.attr('x', 0 - (this._height / 2))
-			.attr('dy', '1em')
-			.attr('class', 'axis-label')
-			.text('Trade Price');
+		this._yAxisLabel.attr('x', 0 - (this._height / 2));
 
 
 		let voronoi = d3.geom.voronoi()
