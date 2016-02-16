@@ -115,7 +115,14 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.text('Trade Price');	
 
 		this._voronoiGroup = this._graph.append('svg:g')
-			.attr('class', 'voronoi');
+			.attr('class', 'voronoi')
+				.on('mouseover', () => {
+					this._toolTip.style('display', null);
+				})	
+				.on('mouseout', () => {
+					this._toolTip.style('display', 'none');
+				})							
+				.on('mousemove', onMouseMove.bind(this));;
 	}
 
 
@@ -205,11 +212,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		let voronoiPaths = this._voronoiGroup.selectAll('path').data(voronoi(this._data));
 
-		voronoiPaths.enter().append('svg:path')
-				.on('mouseover', () => {
-					this._toolTip.style('display', null);
-				})
-				.on('mouseout', onMouseOut.bind(this));
+		voronoiPaths.enter().append('svg:path');
 		
 		voronoiPaths.attr('d', cord => { 
 			return 'M' + cord.join('L') + 'Z'; 
@@ -280,11 +283,11 @@ function lineFactory(xScale, yScale)
 }
 
 
-function onMouseOut(cord)	
+function onMouseMove()	
 {
-	let trade = cord.point;
+	let element = d3.event.target;
 
-	this._toolTip.style('display', 'none');
+	let trade = d3.select(element).datum().point;
 
 	this._toolTip
 		.attr('transform', 'translate(' + this._xScale(xAxisValue(trade)) + ',' + this._yScale(yAxisValue(trade)) + ')');
