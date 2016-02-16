@@ -159,6 +159,8 @@ class TradePrices extends widgetize.base(HTMLElement)
 			.key(item => item.exchange)
 			.entries(data);
 
+
+
 		let line = lineFactory(this._xScale, this._yScale);
 
 		let lines = this._graph.selectAll('path.line').data(dataGroup, exchange => exchange.key);
@@ -174,6 +176,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		lines.attr('d', exchange => line(exchange.values));		
 
 		lines.exit().remove();
+
 
 
 		let colSpace = this._width / dataGroup.length;
@@ -198,16 +201,14 @@ class TradePrices extends widgetize.base(HTMLElement)
 		let voronoiPaths = this._voronoiGroup.selectAll('path').data(voronoi(this._data));
 
 		voronoiPaths.enter().append('svg:path')
-				.attr('d', function(d) { 
-					return 'M' + d.join('L') + 'Z'; 
-				})
-				.datum(function(d) { 
-					return d.point; 
-				})
 				.on('mouseover', () => {
 					this._toolTip.style('display', null);
 				})
 				.on('mouseout', onMouseOut.bind(this));
+		
+		voronoiPaths.attr('d', cord => { 
+			return 'M' + cord.join('L') + 'Z'; 
+		});
 
 		voronoiPaths.exit().remove();
 			
@@ -274,14 +275,16 @@ function lineFactory(xScale, yScale)
 }
 
 
-function onMouseOut(item)	
+function onMouseOut(cord)	
 {
+	let trade = cord.point;
+
 	this._toolTip.style('display', 'none');
 
 	this._toolTip
-		.attr('transform', 'translate(' + this._xScale(xAxisValue(item)) + ',' + this._yScale(yAxisValue(item)) + ')');
+		.attr('transform', 'translate(' + this._xScale(xAxisValue(trade)) + ',' + this._yScale(yAxisValue(trade)) + ')');
 
 	this._toolTopLabel
-		.text(item.price);
+		.text(trade.price);
 }
 
