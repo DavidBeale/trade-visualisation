@@ -122,7 +122,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 				.on('mouseout', () => {
 					this._toolTip.style('display', 'none');
 				})							
-				.on('mousemove', onMouseMove.bind(this));;
+				.on('mousemove', onMouseMove.bind(this));
 	}
 
 
@@ -145,7 +145,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xAxis.attr('transform', 'translate(0,' + (this._height - MARGIN_BOTTOM) + ')')
              .call(xAxisFactory(this._xScale));
 
-		this._xAxisLabel.attr('x', (this._width - MARGIN_RIGHT)/2)
+		this._xAxisLabel.attr('x', (this._width - MARGIN_RIGHT)/2);
 
 
 		this._yScale = d3.scale.linear()
