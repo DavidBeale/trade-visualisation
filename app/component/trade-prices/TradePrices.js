@@ -29,6 +29,10 @@ class TradePrices extends widgetize.base(HTMLElement)
 
 		this._yAxis = null;
 
+		this._xAxisLabel = null;
+
+		this._yAxisLabel = null;
+
 		this._toolTip = null;
 
 		this._xScale = null;
@@ -94,19 +98,36 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xAxis = this._graph.append('svg:g')
 			.attr('class', 'x axis');
 
+		this._xAxisLabel = this._xAxis.append('text')
+			.attr('y', 40)
+			.attr('class', 'axis-label')
+			.text('Trade Time');   	
+
 		this._yAxis = this._graph.append('svg:g')
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + MARGIN_LEFT + ',0)');
 
+		this._yAxisLabel = this._graph.append('text')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 0)
+			.attr('dy', '1em')
+			.attr('class', 'axis-label')
+			.text('Trade Price');	
+
 		this._voronoiGroup = this._graph.append('svg:g')
-			.attr('class', 'voronoi');
+			.attr('class', 'voronoi')
+				.on('mouseover', () => {
+					this._toolTip.style('display', null);
+				})	
+				.on('mouseout', () => {
+					this._toolTip.style('display', 'none');
+				})							
+				.on('mousemove', onMouseMove.bind(this));
 	}
 
 
 	update() 
 	{
-		this._graph.selectAll('path, text.legend, text.axis-label, g.toolTip').remove();
-
 		let data = this._data.concat();
 
 		data.forEach((item) => {
@@ -124,12 +145,7 @@ class TradePrices extends widgetize.base(HTMLElement)
 		this._xAxis.attr('transform', 'translate(0,' + (this._height - MARGIN_BOTTOM) + ')')
              .call(xAxisFactory(this._xScale));
 
-
-        this._xAxis.append('text')
-			.attr('x', (this._width - MARGIN_RIGHT)/2)
-			.attr('y', 40)
-			.attr('class', 'axis-label')
-			.text('Trade Time');   
+		this._xAxisLabel.attr('x', (this._width - MARGIN_RIGHT)/2);
 
 
 		this._yScale = d3.scale.linear()
@@ -141,57 +157,69 @@ class TradePrices extends widgetize.base(HTMLElement)
 
         this._yAxis.call(yAxisFactory(this._yScale));
 
-		this._graph.append('text')
-			.attr('transform', 'rotate(-90)')
-			.attr('y', 0)
-			.attr('x', 0 - (this._height / 2))
-			.attr('dy', '1em')
-			.attr('class', 'axis-label')
-			.text('Trade Price');
+		this._yAxisLabel.attr('x', 0 - (this._height / 2));
 
 
 		let voronoi = d3.geom.voronoi()
 			.x((d) => { return this._xScale(d.time); })
 			.y((d) => { return this._yScale(d.price); })
-			.clipExtent([[0 - MARGIN_LEFT, 0 - MARGIN_TOP], [this._width + MARGIN_RIGHT, this._height + MARGIN_BOTTOM]]);
+			.clipExtent([[MARGIN_LEFT, MARGIN_TOP], [this._width - MARGIN_RIGHT, this._height - MARGIN_BOTTOM]]);
 
 		let dataGroup = d3.nest()
 			.key(item => item.exchange)
-			.entries(data);
+			.entries(data)
+			.sort(sortGroup);
+			
 
 		let line = lineFactory(this._xScale, this._yScale);
 
-		let lines = this._graph.selectAll('path').data(dataGroup);
+		let lines = this._graph.selectAll('path.line').data(dataGroup, exchange => exchange.key);
+
+		lines.enter().append('svg:path')
+				.attr('class', exchange => {
+					return 'line line-' + exchange.key;
+				})
+				.attr('id', exchange => {
+					return 'line_' + exchange.key;
+				});
+
+		lines.transition()
+			.attr('d', exchange => line(exchange.values));		
+
+		lines.exit().remove();
+
+
 
 		let colSpace = this._width / dataGroup.length;
 
-		dataGroup.forEach((exchange, index) => {
-			this._graph.append('svg:path')
-				.attr('d', line(exchange.values))
-				.attr('class', 'line line-' + exchange.key)
-				.attr('id', 'line_' + exchange.key);
+		let legends = this._graph.selectAll('text.legend').data(dataGroup, exchange => exchange.key);
 
-
-			this._graph.append('text')
-				.attr('x', (colSpace/2) + index*colSpace)
+		legends.enter().append('text')
 				.attr('y', 30)
-				.attr('class','legend legend-' + exchange.key)
-				.text(exchange.key);	
+				.attr('class', exchange => {
+					return 'legend legend-' + exchange.key;
+				})
+				.text(exchange => exchange.key);		
+
+		legends.transition()
+			.attr('x', (exchange, index) => {
+				return (colSpace/2) + index*colSpace;
+			});
+
+		legends.exit().remove();
+
+
+
+		let voronoiPaths = this._voronoiGroup.selectAll('path').data(voronoi(this._data));
+
+		voronoiPaths.enter().append('svg:path');
+		
+		voronoiPaths.attr('d', cord => { 
+			return 'M' + cord.join('L') + 'Z'; 
 		});
 
-
-		this._voronoiGroup.selectAll('path').data(voronoi(this._data))
-			.enter().append('svg:path')
-				.attr('d', function(d) { 
-					return 'M' + d.join('L') + 'Z'; 
-				})
-				.datum(function(d) { 
-					return d.point; 
-				})
-				.on('mouseover', () => {
-					this._toolTip.style('display', null);
-				})
-				.on('mouseout', onMouseOut.bind(this));
+		voronoiPaths.exit().remove();
+			
 
 
 		this._toolTip = this._graph.append('svg:g')
@@ -255,14 +283,33 @@ function lineFactory(xScale, yScale)
 }
 
 
-function onMouseOut(item)	
+function onMouseMove()	
 {
-	this._toolTip.style('display', 'none');
+	let element = d3.event.target;
+
+	let trade = d3.select(element).datum().point;
 
 	this._toolTip
-		.attr('transform', 'translate(' + this._xScale(xAxisValue(item)) + ',' + this._yScale(yAxisValue(item)) + ')');
+		.attr('transform', 'translate(' + this._xScale(xAxisValue(trade)) + ',' + this._yScale(yAxisValue(trade)) + ')');
 
 	this._toolTopLabel
-		.text(item.price);
+		.text(trade.price);
 }
 
+
+
+function sortGroup(item1, item2)
+{
+	if (item1.key > item2.key)
+	{
+		return 1;
+	}
+	else if (item1.key < item2.key)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+}
